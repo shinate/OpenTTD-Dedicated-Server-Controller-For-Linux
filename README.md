@@ -39,4 +39,3 @@ otds {list|start|stop|status}
 ## TODO
 
 - 首次启动时的地图随机数
-- 读取存档

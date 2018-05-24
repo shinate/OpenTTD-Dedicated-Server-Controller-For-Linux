@@ -16,6 +16,7 @@ start() {
     fi
 
     SERVER_PATH="$SERVER_SERVER_ROOT/$1"
+    SERVER_AUTOSAVE_PATH="$SERVER_PATH/save/autosave"
     SERVER_PID=`getpid $SERVER_PATH`
 
     if [[ -n $SERVER_PID ]]; then
@@ -23,13 +24,21 @@ start() {
         exit 1
     fi
 
-    if [[ ! -e "$SERVER_PATH/openttd.cfg" ]]; then
+    SAVED=`getLastAutosave $SERVER_PATH`
+
+    if [[ -n $SAVED ]]; then
+        echo -e "服务器 $1 匹配到自动存档，将使用最后生成的存档 $SERVER_AUTOSAVE_PATH/$SAVED 启动"
+        PARAM="-g $SERVER_AUTOSAVE_PATH/$SAVED"
+    elif [[ -e "$SERVER_PATH/openttd.cfg" ]]; then
+        echo -e "服务器 $1 将使用配置文件 $SERVER_PATH/openttd.cfg 启动"
+        PARAM="-c $SERVER_PATH/openttd.cfg -x"
+    else
         echo -e "无法启动，$1 的配置文件 $SERVER_PATH/openttd.cfg 不存在！"
         exit 1
     fi
 
     pushd $SERVER_PATH > /dev/null 2>&1
-    nohup $SERVER_KERNEL -D -x -c $SERVER_PATH/openttd.cfg >> $SERVER_PATH/run.log 2>&1 &
+    nohup $SERVER_KERNEL -D $PARAM -x >> $SERVER_PATH/run.log 2>&1 &
     popd > /dev/null 2>&1
 
     SERVER_PID=`ps axu | grep $SERVER_PATH | grep -v grep | awk '{print $2}'`
@@ -61,6 +70,13 @@ stop() {
 
 getpid() {
     echo `ps axu | grep $1 | grep -v grep | awk '{print $2}'`
+}
+
+getLastAutosave() {
+    path="$1/save/autosave"
+    if [[ -e $path && -d $path ]]; then
+        ls -t $1/save/autosave | head -n1
+    fi
 }
 
 usage() {
