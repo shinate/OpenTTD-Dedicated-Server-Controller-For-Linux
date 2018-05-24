@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+SERVER_ROOT=`pwd`
+SERVER_KERNEL="$SERVER_ROOT/kernel/openttd"
+SERVER_SERVER_ROOT="$SERVER_ROOT/servers"
+
+list() {
+    ls $SERVER_SERVER_ROOT
+}
+
+start() {
+    if [[ -z $1 ]]; then
+        echo -e "请输入配置名称以启动服务器"
+        list
+        exit 1
+    fi
+
+    SERVER_PATH="$SERVER_SERVER_ROOT/$1"
+    SERVER_PID=`getpid $SERVER_PATH`
+
+    if [[ -n $SERVER_PID ]]; then
+        echo -e "服务器 $1 [ $SERVER_PID ] 正在运行，请勿重复启动"
+        exit 1
+    fi
+
+    if [[ ! -e "$SERVER_PATH/openttd.cfg" ]]; then
+        echo -e "无法启动，$1 的配置文件 $SERVER_PATH/openttd.cfg 不存在！"
+        exit 1
+    fi
+
+    pushd $SERVER_PATH > /dev/null 2>&1
+    nohup $SERVER_KERNEL -D -x -c $SERVER_PATH/openttd.cfg >> $SERVER_PATH/run.log 2>&1 &
+    popd > /dev/null 2>&1
+
+    SERVER_PID=`ps axu | grep $SERVER_PATH | grep -v grep | awk '{print $2}'`
+    echo $SERVER_PID > $SERVER_PATH/run.pid
+
+    echo -e "服务器 $1 启动成功"
+    echo -e "查看执行日志: $SERVER_SERVER_ROOT/$1/run.log"
+}
+
+stop() {
+    if [[ -z $1 ]]; then
+        echo -e "请输入配置名称以关闭服务器"
+        status
+        exit 1
+    fi
+
+    SERVER_PATH="$SERVER_SERVER_ROOT/$1"
+    SERVER_PID=`getpid $SERVER_PATH`
+
+    if [[ -z $SERVER_PID ]]; then
+        echo -e "服务器 $1 并没有启动"
+        exit 1
+    fi
+
+    kill $SERVER_PID
+
+    echo -e "服务器 $1 关闭成功"
+}
+
+getpid() {
+    echo `ps axu | grep $1 | grep -v grep | awk '{print $2}'`
+}
+
+usage() {
+    echo -e "\n    list    展示可用的服务器配置名称列表"
+    echo -e "\n   start    $0 start 名 启动相应的服务器"
+    echo -e "\n    stop    $0 stop 名称 关闭相应的服务器"
+    echo -e "\n  status    运行中的服务器 名称 [ PID ]"
+    echo -e "\n\n"
+    exit 1
+}
+
+status() {
+    echo -e "正在运行的服务器"
+    ps axu | grep openttd | grep -v grep | grep -v $0 | awk '{print $2$15}' | awk -F '/' '{print $5" [ "$1" ] "}'
+}
+
+case "$1" in
+    -h|--help)
+        usage
+        ;;
+    list)
+        list
+        ;;
+    start)
+        start $2
+        ;;
+    stop)
+        stop $2
+        ;;
+    status)
+        status
+        ;;
+    *)
+        echo -e "使用: otds {list|start|stop|status}"
+        echo -e "详细说明参见 -h (--help)"
+        exit 1
+        ;;
+esac
