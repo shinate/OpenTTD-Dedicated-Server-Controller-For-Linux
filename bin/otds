@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SERVER_ROOT=`pwd`
+SERVER_ROOT="/data/openttd"
 SERVER_KERNEL="$SERVER_ROOT/kernel/openttd"
 SERVER_SERVER_ROOT="$SERVER_ROOT/servers"
 
