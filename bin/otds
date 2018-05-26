@@ -103,8 +103,9 @@ usage() {
     echo -e "\n    list    展示可用的服务器配置名称列表"
     echo -e "\n   start    $0 start 名 启动相应的服务器"
     echo -e "\n    stop    $0 stop 名称 关闭相应的服务器"
+    echo -e "\n   clear    $0 stop 名称 清除相应的服务器的自动存档"
     echo -e "\n  status    运行中的服务器 名称 [ PID ]"
-    echo -e "\n\n"
+    echo -e "\n"
     exit 1
 }
 
