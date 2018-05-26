@@ -38,7 +38,7 @@ start() {
     fi
 
     pushd $SERVER_PATH > /dev/null 2>&1
-    nohup $SERVER_KERNEL -D $PARAM -x >> $SERVER_PATH/run.log 2>&1 &
+    nohup $SERVER_KERNEL -D $PARAM >> $SERVER_PATH/run.log 2>&1 &
     popd > /dev/null 2>&1
 
     SERVER_PID=`ps axu | grep $SERVER_PATH | grep -v grep | awk '{print $2}'`
@@ -68,6 +68,26 @@ stop() {
     echo -e "服务器 $1 关闭成功"
 }
 
+clear() {
+    if [[ -z $1 ]]; then
+        echo -e "请输入配置名称以清理存档服务器"
+        list
+        exit 1
+    fi
+
+    # TODO
+
+    SERVER_PATH="$SERVER_SERVER_ROOT/$1"
+    SAVED=`getLastAutosave $SERVER_PATH`
+
+    if [[ -n $SAVED ]]; then
+        rm -rf "$SERVER_PATH/save/autosave"
+        echo -e "存档清理完毕"
+    else
+        echo -e "没有找到任何存档"
+    fi
+}
+
 getpid() {
     echo `ps axu | grep $1 | grep -v grep | awk '{print $2}'`
 }
@@ -90,7 +110,7 @@ usage() {
 
 status() {
     echo -e "正在运行的服务器"
-    ps axu | grep openttd | grep -v grep | grep -v $0 | awk '{print $2$15}' | awk -F '/' '{print $5" [ "$1" ] "}'
+    ps axu | grep openttd | grep -v grep | grep -v $0 | awk '{print $2$14}' | awk -F '/' '{print $5" [ "$1" ] "}'
 }
 
 case "$1" in
@@ -105,6 +125,9 @@ case "$1" in
         ;;
     stop)
         stop $2
+        ;;
+    clear)
+        clear $2
         ;;
     status)
         status

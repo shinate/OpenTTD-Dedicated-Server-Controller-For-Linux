@@ -38,4 +38,5 @@ otds {list|start|stop|status}
 
 ## TODO
 
-- 首次启动时的地图随机数
+- 随机地图创建时的地图随机种子 -G
+- 用scn图开始新游戏的支持 scenario/*.scn，-g
