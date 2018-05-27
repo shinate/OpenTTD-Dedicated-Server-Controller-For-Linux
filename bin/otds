@@ -134,7 +134,7 @@ case "$1" in
         status
         ;;
     *)
-        echo -e "使用: otds {list|start|stop|status}"
+        echo -e "使用: otds {list|start|stop|clear|status}"
         echo -e "详细说明参见 -h (--help)"
         exit 1
         ;;
