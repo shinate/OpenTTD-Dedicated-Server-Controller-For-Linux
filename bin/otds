@@ -10,7 +10,7 @@ list() {
 
 start() {
     if [[ -z $1 ]]; then
-        echo -e "请输入配置名称以启动服务器"
+        echo -e "请输入名称以启动服务器"
         list
         exit 1
     fi
@@ -50,7 +50,7 @@ start() {
 
 stop() {
     if [[ -z $1 ]]; then
-        echo -e "请输入配置名称以关闭服务器"
+        echo -e "请输入名称以关闭服务器"
         status
         exit 1
     fi
@@ -70,7 +70,7 @@ stop() {
 
 clear() {
     if [[ -z $1 ]]; then
-        echo -e "请输入配置名称以清理存档服务器"
+        echo -e "请输入名称以清理存档服务器"
         list
         exit 1
     fi
@@ -88,6 +88,32 @@ clear() {
     fi
 }
 
+backup() {
+    if [[ -z $1 ]]; then
+        echo -e "请输入名称以备份存档"
+        list
+        exit 1
+    fi
+
+    SERVER_PATH="$SERVER_SERVER_ROOT/$1"
+    SERVER_AUTOSAVE_PATH="$SERVER_PATH/save/autosave"
+
+    SAVED=`getLastAutosave $SERVER_PATH`
+
+    if [[ -n $SAVED ]]; then
+        echo -e "服务器 $1 匹配到自动存档，将使用最后生成的存档 $SERVER_AUTOSAVE_PATH/$SAVED 进行备份"
+        CURRENT_DATETIME=$(date "+%Y%m%d_%H%M%S")
+        FROM="$SERVER_AUTOSAVE_PATH/$SAVED"
+        TO="$SERVER_PATH/save/$1_backup_$CURRENT_DATETIME.sav"
+        cp "$FROM" "$TO"
+        echo -e "存档备份成功 $TO"
+        exit 1
+    else
+        echo -e "没有找到任何存档"
+        exit 1
+    fi
+}
+
 getpid() {
     echo `ps axu | grep $1 | grep -v grep | awk '{print $2}'`
 }
@@ -100,10 +126,10 @@ getLastAutosave() {
 }
 
 usage() {
-    echo -e "\n    list    展示可用的服务器配置名称列表"
-    echo -e "\n   start    $0 start 名 启动相应的服务器"
-    echo -e "\n    stop    $0 stop 名称 关闭相应的服务器"
-    echo -e "\n   clear    $0 stop 名称 清除相应的服务器的自动存档"
+    echo -e "\n    list    展示可用的服务器名称列表"
+    echo -e "\n   start    $0 start 服务器名 启动相应的服务器"
+    echo -e "\n    stop    $0 stop 服务器名 关闭相应的服务器"
+    echo -e "\n   clear    $0 stop 服务器名 清除相应的服务器的自动存档"
     echo -e "\n  status    运行中的服务器 名称 [ PID ]"
     echo -e "\n"
     exit 1
@@ -133,8 +159,11 @@ case "$1" in
     status)
         status
         ;;
+    backup)
+        backup $2
+        ;;
     *)
-        echo -e "使用: otds {list|start|stop|clear|status}"
+        echo -e "使用: otds {list|start|stop|clear|status|backup}"
         echo -e "详细说明参见 -h (--help)"
         exit 1
         ;;
