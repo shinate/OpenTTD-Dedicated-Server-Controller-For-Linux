@@ -126,12 +126,15 @@ getLastAutosave() {
 }
 
 usage() {
-    echo -e "\n    list    展示可用的服务器名称列表"
-    echo -e "\n   start    $0 start 服务器名 启动相应的服务器"
-    echo -e "\n    stop    $0 stop 服务器名 关闭相应的服务器"
-    echo -e "\n   clear    $0 stop 服务器名 清除相应的服务器的自动存档"
-    echo -e "\n  status    运行中的服务器 名称 [ PID ]"
-    echo -e "\n"
+    echo -e "$0 {list|start|stop|clear|status|backup}"
+    echo -e "说明:"
+    echo -e "  list                展示可用的服务器名称列表"
+    echo -e "  start [服务器名]    启动相应的服务器"
+    echo -e "  stop [服务器名]     关闭相应的服务器"
+    echo -e "  clear [服务器名]    清除相应的服务器的自动存档"
+    echo -e "  backup [服务器名]   备份存档"
+    echo -e "  status              运行中的服务器 名称 [ PID ]"
+    echo -e ""
     exit 1
 }
 
