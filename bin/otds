@@ -57,7 +57,7 @@ start() {
 stop() {
     if [[ -z $1 ]]; then
         echo -e "请输入名称以关闭服务器"
-        status
+        state
         exit 1
     fi
 
@@ -139,19 +139,19 @@ getNewestHeightMap() {
 }
 
 usage() {
-    echo -e "$0 {list|start|stop|clear|status|backup}"
+    echo -e "$0 {list|start|stop|clear|state|backup}"
     echo -e "说明:"
     echo -e "  list                展示可用的服务器名称列表"
     echo -e "  start [服务器名]    启动相应的服务器"
     echo -e "  stop [服务器名]     关闭相应的服务器"
     echo -e "  clear [服务器名]    清除相应的服务器的自动存档"
     echo -e "  backup [服务器名]   备份存档"
-    echo -e "  status              运行中的服务器 名称 [ PID ]"
+    echo -e "  state               运行中的服务器 名称 [ PID ]"
     echo -e ""
     exit 1
 }
 
-status() {
+state() {
     echo -e "正在运行的服务器"
     ps axu | grep openttd | grep -v grep | grep -v $0 | awk '{print $2$14}' | awk -F '/' '{print $5" [ "$1" ] "}'
 }
@@ -172,14 +172,14 @@ case "$1" in
     clear)
         clear $2
         ;;
-    status)
-        status
+    state)
+        state
         ;;
     backup)
         backup $2
         ;;
     *)
-        echo -e "使用: otds {list|start|stop|clear|status|backup}"
+        echo -e "使用: otds {list|start|stop|clear|state|backup}"
         echo -e "详细说明参见 -h (--help)"
         exit 1
         ;;
