@@ -17,6 +17,7 @@ start() {
 
     SERVER_PATH="$SERVER_SERVER_ROOT/$1"
     SERVER_AUTOSAVE_PATH="$SERVER_PATH/save/autosave"
+#    SERVER_HEIGHT_MAP_PATH="$SERVER_PATH/scenario/heightmap"
     SERVER_PID=`getpid $SERVER_PATH`
 
     if [[ -n $SERVER_PID ]]; then
@@ -26,9 +27,14 @@ start() {
 
     SAVED=`getLastAutosave $SERVER_PATH`
 
+#    HEIGHT_MAP=`getNewestHeightMap $SERVER_PATH`
+
     if [[ -n $SAVED ]]; then
         echo -e "服务器 $1 匹配到自动存档，将使用最后生成的存档 $SERVER_AUTOSAVE_PATH/$SAVED 启动"
-        PARAM="-g $SERVER_AUTOSAVE_PATH/$SAVED"
+        PARAM="-g $SERVER_AUTOSAVE_PATH/$SAVED -x"
+#    elif [[ -n $HEIGHT_MAP && -e "$SERVER_PATH/openttd.cfg"  ]]; then
+#        echo -e "服务器 $1 将使用高度图 $SERVER_HEIGHT_MAP_PATH/$HEIGHT_MAP + 配置文件 $SERVER_PATH/openttd.cfg 启动"
+#        PARAM="-g $SERVER_HEIGHT_MAP_PATH/$HEIGHT_MAP -c $SERVER_PATH/openttd.cfg -x"
     elif [[ -e "$SERVER_PATH/openttd.cfg" ]]; then
         echo -e "服务器 $1 将使用配置文件 $SERVER_PATH/openttd.cfg 启动"
         PARAM="-c $SERVER_PATH/openttd.cfg -x"
@@ -121,7 +127,14 @@ getpid() {
 getLastAutosave() {
     path="$1/save/autosave"
     if [[ -e $path && -d $path ]]; then
-        ls -t $1/save/autosave | head -n1
+        ls -t $path | head -n1
+    fi
+}
+
+getNewestHeightMap() {
+    path="$1/scenario/heightmap"
+    if [[ -e $path && -d $path ]]; then
+        ls -t $path | head -n1
     fi
 }
 
