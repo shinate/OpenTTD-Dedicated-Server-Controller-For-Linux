@@ -22,6 +22,16 @@
         |- ...
 ```
 
+## 设置 SERVER_ROOT
+
+```
+vim otds
+```
+
+```bash
+SERVER_ROOT="{your own path}"
+```
+
 ## 添加到全局命令
 
 ```
