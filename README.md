@@ -31,12 +31,11 @@ ln -s {your own path}/bin/otds /usr/sbin/otds
 ## 运行
 
 ```
-otds {list|start|stop|status}
+otds {list|start|stop|clear|stats|backup}
 ```
 
 详细说明参见 ```otds -h (--help)```
 
 ## TODO
 
-- 随机地图创建时的地图随机种子 -G
-- 用scn图开始新游戏的支持 scenario/*.scn，-g
+scn开图无法实现，只能制作好图使用sav开图
