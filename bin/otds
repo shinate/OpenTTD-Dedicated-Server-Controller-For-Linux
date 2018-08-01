@@ -31,7 +31,7 @@ start() {
 
     if [[ -n $SAVED ]]; then
         echo -e "服务器 $1 匹配到自动存档，将使用最后生成的存档 $SERVER_AUTOSAVE_PATH/$SAVED 启动"
-        PARAM="-g $SERVER_AUTOSAVE_PATH/$SAVED -x"
+        PARAM="-g $SERVER_AUTOSAVE_PATH/$SAVED -c $SERVER_PATH/openttd.cfg -x"
 #    elif [[ -n $HEIGHT_MAP && -e "$SERVER_PATH/openttd.cfg"  ]]; then
 #        echo -e "服务器 $1 将使用高度图 $SERVER_HEIGHT_MAP_PATH/$HEIGHT_MAP + 配置文件 $SERVER_PATH/openttd.cfg 启动"
 #        PARAM="-g $SERVER_HEIGHT_MAP_PATH/$HEIGHT_MAP -c $SERVER_PATH/openttd.cfg -x"
@@ -57,7 +57,7 @@ start() {
 stop() {
     if [[ -z $1 ]]; then
         echo -e "请输入名称以关闭服务器"
-        state
+        stats
         exit 1
     fi
 
