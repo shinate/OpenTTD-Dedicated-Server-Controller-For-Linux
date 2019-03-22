@@ -46,6 +46,21 @@ otds {list|start|stop|clear|stats|backup}
 
 详细说明参见 ```otds -h (--help)```
 
+## 关于服务器的配置
+
+### Timing variables for network-play
+
+| Variable | Values | Meaning |
+|---|---|---|
+| max_join_time | 0-65535 | Maximum amount of time, in game ticks, a client may take to sync up during joining. |
+| pause_on_join | true/false | Pause the game when people join. |
+| max_download_time | 0-65535 | Maximum amount of time, in game ticks, a client may take to download the map. |
+| max_lag_time | 0-65535 | Maximum amount of time, in game ticks, a client may be lagging behind the server. |
+
+Note that all values are in game ticks, that is, 1/74th of a game day (1/30th of a second).
+Increase the values until your users can connect normally. If you set them too long however, there is an increased danger that people take too long to connect, and just waste bandwidth.
+For larger maps, it is highly recommended to enable the pause_on_join, as it eliminates the need to catch-up with the game after map downloading.
+
 ## TODO
 
 scn开图无法实现，只能制作好图使用sav开图
