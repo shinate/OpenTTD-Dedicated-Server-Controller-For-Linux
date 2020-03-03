@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-SERVER_ROOT="/data/openttd"
-SERVER_KERNEL="$SERVER_ROOT/kernel/openttd"
-SERVER_SERVER_ROOT="$SERVER_ROOT/servers"
+SERVER_ROOT=$(dirname $(readlink -f "$0"))
+SERVER_ROOT=${SERVER_ROOT%/*}
+SERVER_KERNEL="${SERVER_ROOT}/kernel/openttd"
+SERVER_SERVER_ROOT="${SERVER_ROOT}/servers"
 
 list() {
-    ls $SERVER_SERVER_ROOT
+    ls ${SERVER_SERVER_ROOT}
 }
 
 start() {
@@ -15,43 +16,43 @@ start() {
         exit 1
     fi
 
-    SERVER_PATH="$SERVER_SERVER_ROOT/$1"
-    SERVER_AUTOSAVE_PATH="$SERVER_PATH/save/autosave"
-#    SERVER_HEIGHT_MAP_PATH="$SERVER_PATH/scenario/heightmap"
-    SERVER_PID=`getpid $SERVER_PATH`
+    SERVER_PATH="${SERVER_SERVER_ROOT}/$1"
+    SERVER_AUTOSAVE_PATH="${SERVER_PATH}/save/autosave"
+#    SERVER_HEIGHT_MAP_PATH="${SERVER_PATH}/scenario/heightmap"
+    SERVER_PID=`getpid ${SERVER_PATH}`
 
-    if [[ -n $SERVER_PID ]]; then
-        echo -e "服务器 $1 [ $SERVER_PID ] 正在运行，请勿重复启动"
+    if [[ -n ${SERVER_PID} ]]; then
+        echo -e "服务器 $1 [ ${SERVER_PID} ] 正在运行，请勿重复启动"
         exit 1
     fi
 
-    SAVED=`getLastAutosave $SERVER_PATH`
+    SAVED=`getLastAutosave ${SERVER_PATH}`
 
-#    HEIGHT_MAP=`getNewestHeightMap $SERVER_PATH`
+#    HEIGHT_MAP=`getNewestHeightMap ${SERVER_PATH}`
 
-    if [[ -n $SAVED ]]; then
-        echo -e "服务器 $1 匹配到自动存档，将使用最后生成的存档 $SERVER_AUTOSAVE_PATH/$SAVED 启动"
-        PARAM="-g $SERVER_AUTOSAVE_PATH/$SAVED -c $SERVER_PATH/openttd.cfg -x"
+    if [[ -n ${SAVED} ]]; then
+        echo -e "服务器 $1 匹配到自动存档，将使用最后生成的存档 ${SERVER_AUTOSAVE_PATH}/${SAVED} 启动"
+        PARAM="-g ${SERVER_AUTOSAVE_PATH}/${SAVED} -c ${SERVER_PATH}/openttd.cfg -x"
 #    elif [[ -n $HEIGHT_MAP && -e "$SERVER_PATH/openttd.cfg"  ]]; then
 #        echo -e "服务器 $1 将使用高度图 $SERVER_HEIGHT_MAP_PATH/$HEIGHT_MAP + 配置文件 $SERVER_PATH/openttd.cfg 启动"
 #        PARAM="-g $SERVER_HEIGHT_MAP_PATH/$HEIGHT_MAP -c $SERVER_PATH/openttd.cfg -x"
-    elif [[ -e "$SERVER_PATH/openttd.cfg" ]]; then
-        echo -e "服务器 $1 将使用配置文件 $SERVER_PATH/openttd.cfg 启动"
-        PARAM="-c $SERVER_PATH/openttd.cfg -x"
+    elif [[ -e "${SERVER_PATH}/openttd.cfg" ]]; then
+        echo -e "服务器 $1 将使用配置文件 ${SERVER_PATH}/openttd.cfg 启动"
+        PARAM="-c ${SERVER_PATH}/openttd.cfg -x"
     else
-        echo -e "无法启动，$1 的配置文件 $SERVER_PATH/openttd.cfg 不存在！"
+        echo -e "无法启动，$1 的配置文件 ${SERVER_PATH}/openttd.cfg 不存在！"
         exit 1
     fi
 
-    pushd $SERVER_PATH > /dev/null 2>&1
-    nohup $SERVER_KERNEL -D $PARAM >> $SERVER_PATH/run.log 2>&1 &
+    pushd ${SERVER_PATH} > /dev/null 2>&1
+    nohup ${SERVER_KERNEL} -D ${PARAM} >> ${SERVER_PATH}/run.log 2>&1 &
     popd > /dev/null 2>&1
 
-    SERVER_PID=`ps axu | grep $SERVER_PATH | grep -v grep | awk '{print $2}'`
-    echo $SERVER_PID > $SERVER_PATH/run.pid
+    SERVER_PID=`ps axu | grep ${SERVER_PATH} | grep -v grep | awk '{print $2}'`
+    echo ${SERVER_PID} > ${SERVER_PATH}/run.pid
 
     echo -e "服务器 $1 启动成功"
-    echo -e "查看执行日志: $SERVER_SERVER_ROOT/$1/run.log"
+    echo -e "查看执行日志: ${SERVER_SERVER_ROOT}/$1/run.log"
 }
 
 stop() {
@@ -61,15 +62,15 @@ stop() {
         exit 1
     fi
 
-    SERVER_PATH="$SERVER_SERVER_ROOT/$1"
-    SERVER_PID=`getpid $SERVER_PATH`
+    SERVER_PATH="${SERVER_SERVER_ROOT}/$1"
+    SERVER_PID=`getpid ${SERVER_PATH}`
 
-    if [[ -z $SERVER_PID ]]; then
+    if [[ -z ${SERVER_PID} ]]; then
         echo -e "服务器 $1 并没有启动"
         exit 1
     fi
 
-    kill $SERVER_PID
+    kill ${SERVER_PID}
 
     echo -e "服务器 $1 关闭成功"
 }
@@ -83,11 +84,11 @@ clear() {
 
     # TODO
 
-    SERVER_PATH="$SERVER_SERVER_ROOT/$1"
-    SAVED=`getLastAutosave $SERVER_PATH`
+    SERVER_PATH="${SERVER_SERVER_ROOT}/$1"
+    SAVED=`getLastAutosave ${SERVER_PATH}`
 
-    if [[ -n $SAVED ]]; then
-        rm -rf "$SERVER_PATH/save/autosave"
+    if [[ -n ${SAVED} ]]; then
+        rm -rf "${SERVER_PATH}/save/autosave"
         echo -e "存档清理完毕"
     else
         echo -e "没有找到任何存档"
@@ -101,18 +102,18 @@ backup() {
         exit 1
     fi
 
-    SERVER_PATH="$SERVER_SERVER_ROOT/$1"
-    SERVER_AUTOSAVE_PATH="$SERVER_PATH/save/autosave"
+    SERVER_PATH="${SERVER_SERVER_ROOT}/$1"
+    SERVER_AUTOSAVE_PATH="${SERVER_PATH}/save/autosave"
 
-    SAVED=`getLastAutosave $SERVER_PATH`
+    SAVED=`getLastAutosave ${SERVER_PATH}`
 
-    if [[ -n $SAVED ]]; then
-        echo -e "服务器 $1 匹配到自动存档，将使用最后生成的存档 $SERVER_AUTOSAVE_PATH/$SAVED 进行备份"
+    if [[ -n ${SAVED} ]]; then
+        echo -e "服务器 $1 匹配到自动存档，将使用最后生成的存档 ${SERVER_AUTOSAVE_PATH}/${SAVED} 进行备份"
         CURRENT_DATETIME=$(date "+%Y%m%d_%H%M%S")
-        FROM="$SERVER_AUTOSAVE_PATH/$SAVED"
-        TO="$SERVER_PATH/save/$1_backup_$CURRENT_DATETIME.sav"
-        cp "$FROM" "$TO"
-        echo -e "存档备份成功 $TO"
+        FROM="${SERVER_AUTOSAVE_PATH}/${SAVED}"
+        TO="${SERVER_PATH}/save/$1_backup_${CURRENT_DATETIME}.sav"
+        cp "${FROM}" "${TO}"
+        echo -e "存档备份成功 ${TO}"
         exit 1
     else
         echo -e "没有找到任何存档"
@@ -126,15 +127,15 @@ getpid() {
 
 getLastAutosave() {
     path="$1/save/autosave"
-    if [[ -e $path && -d $path ]]; then
-        ls -t $path | head -n1
+    if [[ -e ${path} && -d ${path} ]]; then
+        ls -t ${path} | head -n1
     fi
 }
 
 getNewestHeightMap() {
     path="$1/scenario/heightmap"
-    if [[ -e $path && -d $path ]]; then
-        ls -t $path | head -n1
+    if [[ -e ${path} && -d ${path} ]]; then
+        ls -t ${path} | head -n1
     fi
 }
 

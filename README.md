@@ -50,12 +50,12 @@ otds {list|start|stop|clear|stats|backup}
 
 ### Timing variables for network-play
 
-| Variable | Values | Meaning |
-|---|---|---|
-| max_join_time | 0-65535 | Maximum amount of time, in game ticks, a client may take to sync up during joining. |
-| pause_on_join | true/false | Pause the game when people join. |
-| max_download_time | 0-65535 | Maximum amount of time, in game ticks, a client may take to download the map. |
-| max_lag_time | 0-65535 | Maximum amount of time, in game ticks, a client may be lagging behind the server. |
+| Variable | Values | Meaning | 中文描述 |
+|---|---|---|---|
+| max_join_time | 0-65535 | Maximum amount of time, in game ticks, a client may take to sync up during joining. | 客户端加入时间超过多久就进不来了 |
+| pause_on_join | true/false | Pause the game when people join. | 客户端接入时候全图是否暂停，是: 全图暂停，等新进下载完；否: 所有人继续玩，新进能不能加入看造化 |
+| max_download_time | 0-65535 | Maximum amount of time, in game ticks, a client may take to download the map. | 客户端下载地图多久之后没下完就被踢 |
+| max_lag_time | 0-65535 | Maximum amount of time, in game ticks, a client may be lagging behind the server. | 客户端多久没同步数据包就被踢 |
 
 Note that all values are in game ticks, that is, 1/74th of a game day (1/30th of a second).
 Increase the values until your users can connect normally. If you set them too long however, there is an increased danger that people take too long to connect, and just waste bandwidth.
