@@ -8,6 +8,7 @@
 
 |- kernel/                 openttd 程序所在目录，可直接下载或源码编译
     |- openttd
+    |- lang
     |- ...
 
 |- servers/

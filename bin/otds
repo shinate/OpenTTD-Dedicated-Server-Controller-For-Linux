@@ -44,6 +44,8 @@ start() {
         exit 1
     fi
 
+    echo "RUN: ${SERVER_KERNEL} -D ${PARAM}"
+
     pushd ${SERVER_PATH} > /dev/null 2>&1
     nohup ${SERVER_KERNEL} -D ${PARAM} >> ${SERVER_PATH}/run.log 2>&1 &
     popd > /dev/null 2>&1
