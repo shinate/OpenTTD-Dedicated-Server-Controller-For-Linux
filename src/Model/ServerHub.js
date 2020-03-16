@@ -1,13 +1,10 @@
 import fs from 'fs';
-import path from 'path';
-import config from '../config';
-import ini from 'ini';
-import { isEmpty } from 'lodash';
+import config from '../../config';
 import OpenTTDServer from './OpenTTDServer';
 
 let _SERVERS = null;
 
-export default class ServerHub {
+class ServerHub {
 
     constructor() {
         if (_SERVERS === null) {
@@ -33,3 +30,13 @@ export default class ServerHub {
         return _SERVERS;
     }
 }
+
+let _ServerHub = null;
+
+export default (function () {
+    if (_ServerHub === null) {
+        _ServerHub = new ServerHub();
+    }
+
+    return _ServerHub;
+})();

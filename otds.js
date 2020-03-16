@@ -5,8 +5,8 @@ import http from 'http';
 import express from 'express';
 import socketIO from 'socket.io';
 import config from './config';
-import OpenTTDServer from './src/OpenTTDServer'
-import ServerHub from './src/ServerHub';
+import OpenTTDServer from './src/Model/OpenTTDServer'
+import { dispatchRequest } from './src/request';
 
 console.log('Configuration:');
 console.log(config);
@@ -14,8 +14,6 @@ console.log(config);
 const app = express();
 const server = http.createServer(app);
 const SIO = socketIO(server);
-
-const HUB = new ServerHub();
 
 const SERVERS = {}
 
@@ -35,9 +33,9 @@ SIO.of('/socket').on('connection', function (socket) {
             }
         });
     });
-});
 
-console.log(HUB.servers());
+    socket.on('REQ', dispatchRequest(socket));
+});
 
 app.use(express.static(config.PUBLIC_PATH));
 

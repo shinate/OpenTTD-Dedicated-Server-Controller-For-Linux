@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import config from '../config';
+import config from '../../config';
 import { spawn } from 'child_process';
 import ini from 'ini';
 import { isEmpty } from 'lodash';
@@ -30,6 +30,10 @@ export default class OpenTTDServer {
 
         this.configContent = configContent;
         this.isValidConfigure = configContent !== null;
+    }
+
+    getStatus() {
+
     }
 
     start() {
