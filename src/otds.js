@@ -1,45 +1,59 @@
-import { spawn } from 'child_process';
-import path from 'path';
 import process from 'process';
 import http from 'http';
 import express from 'express';
 import socketIO from 'socket.io';
 import config from './config';
-import OpenTTDServer from './src/Model/OpenTTDServer'
-import { dispatchRequest } from './src/request';
+import { dispatchRequest } from './request';
+import socketClientHUB from './Model/socketClientHUB';
+import Crond from './Model/Crond';
+import Servers from './cmd/Servers';
+import ServerHub from './Model/ServerHub';
 
-console.log('Configuration:');
-console.log(config);
+console.log('Configuration:', config);
 
 const app = express();
 const server = http.createServer(app);
 const SIO = socketIO(server);
 
-const SERVERS = {}
+const SERVERS = {};
 
-SIO.of('/socket').on('connection', function (socket) {
-    socket.emit('message', 'Welcome!');
-
-    socket.on('CMD', function (data) {
-        console.log(data);
-        SERVERS[data.name] = new OpenTTDServer(data.name, {
-            stdout: data => {
-                process.stdout.write(`${data}`);
-                socket.emit('news', `${data}`);
-            },
-            stderr: data => {
-                process.stdout.write(`${data}`);
-                socket.emit('news', `${data}`);
+SIO
+    .of('/socket')
+    .on('connection', function (socket) {
+        socketClientHUB.connect(socket);
+        socket.emit('message', 'Welcome!');
+        socket.on('request', dispatchRequest(socket));
+        socket.on('disconnect', function (reason) {
+            switch (reason) {
+                case 'transport close':
+                    socketClientHUB.disconnect(socket);
+                    socket = null;
+                    break;
+                case '':
+                default:
+                    console.log('');
+                    break;
             }
         });
     });
 
-    socket.on('REQ', dispatchRequest(socket));
-});
-
 app.use(express.static(config.PUBLIC_PATH));
 
 server.listen(3000);
+
+//Crond
+Crond.add('servers_push', '*/10 * * * * *', function () {
+    socketClientHUB.push('push', (new Servers()).default());
+}, null, true);
+
+Crond.add('server_stats', '*/30 * * * * *', function () {
+    ServerHub.reflush(null, 'getProcessStats');
+}, null, true);
+
+// have save success callback
+// Crond.add('server_stats', '0 */1 * * * *', function () {
+//     ServerHub.reflush(null, 'getSaves');
+// }, null, true);
 
 // const sub = spawn('dir');
 // //

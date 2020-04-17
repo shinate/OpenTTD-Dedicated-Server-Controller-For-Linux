@@ -1,0 +1,11 @@
+{
+  "verbose": true,
+  "watch"  : [
+    "src/**/*.js",
+    "otds.js"
+  ],
+  "delay"  : 2000,
+  "execMap": {
+    "js": "babel-node"
+  }
+}

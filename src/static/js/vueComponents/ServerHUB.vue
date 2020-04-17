@@ -1,20 +1,20 @@
 <template>
-    <b-container v-if="servers">
-        <b-row>
-            <b-col v-for="server in servers" :key="server.name">
-                <open-t-t-d-servers :server="server"></open-t-t-d-servers>
+    <b-container class="pt-5" v-if="servers">
+        <b-row cols="1" cols-lg="2" cols-md="2" cols-sm="1" cols-xl="3">
+            <b-col class="mb-3" v-for="server in servers" v-if="server" :key="server.name">
+                <open-t-t-d-server :server="server"></open-t-t-d-server>
             </b-col>
         </b-row>
     </b-container>
 </template>
 
 <script>
-    import OpenTTDServers from './OpenTTDServers';
+    import OpenTTDServer from './OpenTTDServer';
 
     export default {
+        props     : ['servers'],
         components: {
-            OpenTTDServers
-        },
-        props     : ['servers']
+            OpenTTDServer
+        }
     }
 </script>
