@@ -145,12 +145,12 @@ export default class OpenTTDServer {
         this.saves = S;
     }
 
-    start() {
+    start(...args) {
         if (this[HANDLE] !== null) {
             return;
         }
 
-        this.spawn();
+        this.spawn(...args);
         this.reflush();
     }
 
@@ -193,8 +193,12 @@ export default class OpenTTDServer {
         this.send(`save ${saveFile}`);
     }
 
-    spawn() {
-        this[HANDLE] = spawn(config.KERNEL, [ '-D', '-x', '-c', this.configFilePath ], {
+    spawn(save = null) {
+        let withSave = null;
+        if (save) {
+            withSave = [ '-g', path.join(this.savePath, save.auto ? 'autosave' : '', save.file) ];
+        }
+        this[HANDLE] = spawn(config.KERNEL, [ '-D', '-x', '-c', this.configFilePath, ...withSave ], {
             detached: true,
             stdio   : 'pipe'
         });

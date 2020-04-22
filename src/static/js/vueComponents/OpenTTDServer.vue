@@ -24,11 +24,29 @@
             <p v-if="lastSave">
                 {{ lastSave.file }}
                 <b-badge v-if="lastSave.auto" variant="success">auto</b-badge>
+                <b-button class="save-more" variant="light" size="sm" @click="showAllSaves">...</b-button>
+                <b-modal ref="savesPanel" body-class="p-0" scrollable centered>
+                    <template v-slot:modal-header>
+                        <h6>{{ title }}</h6>
+                    </template>
+                    <b-list-group flush>
+                        <b-list-group-item v-for="save in server.saves" :key="$unique"
+                                           class="d-flex justify-content-between align-items-center">
+                            {{ save.file }}
+                            <b-button variant="success" :disabled="server.stats.code !== 1" size="sm"
+                                      @click="start(save)">start
+                            </b-button>
+                        </b-list-group-item>
+                    </b-list-group>
+                    <template v-slot:modal-footer="{ hide }">
+                        <b-button size="sm" variant="secondary" @click="hide()">CLOSE</b-button>
+                    </template>
+                </b-modal>
             </p>
         </b-card-body>
         <template v-slot:footer>
             <b-row class="flex-nowrap">
-                <b-col>
+                <b-col class="d-flex align-items-center">
                     <b-list-group v-if="server.process" horizontal class="ml-1">
                         <b-list-group-item>CPU:{{ CPU }}</b-list-group-item>
                         <b-list-group-item>MEM:{{ MEM }}</b-list-group-item>
@@ -125,14 +143,21 @@
             }
         },
         methods : {
-            start() {
-                this.$io.send('start', { params: { name: this.name } });
+            start(withSave = null) {
+                let params = { name: this.name };
+                if (withSave) {
+                    params = { ...params, ...withSave };
+                }
+                this.$io.send('start', { params });
             },
             stop() {
                 this.$io.send('stop', { params: { name: this.name } });
             },
             save() {
                 this.$io.send('save', { params: { name: this.name } });
+            },
+            showAllSaves() {
+                this.$refs['savesPanel'].show();
             }
         }
     }
@@ -159,11 +184,6 @@
         .card-footer {
             font-size: .75rem;
             padding: 0;
-
-            .col {
-                display: inline-flex;
-                align-items: center;
-            }
 
             .list-group-item {
                 padding: 0 .25rem;
@@ -227,5 +247,16 @@
             }
 
         }
+    }
+
+    .save-more {
+        font-size: .75rem;
+        padding: 0 .5rem 0.25rem;
+        margin-top: -.25rem;
+        line-height: 1;
+    }
+
+    .saves-panel {
+        padding: 0;
     }
 </style>

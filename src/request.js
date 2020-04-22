@@ -1,4 +1,3 @@
-/* global require */
 import fs from 'fs';
 import path from 'path';
 import { result, isObject, isString } from 'lodash';

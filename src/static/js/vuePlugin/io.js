@@ -9,4 +9,4 @@ export default {
         });
         Object.defineProperty(Vue.prototype, '$io', Object.getOwnPropertyDescriptor(Vue, 'io'));
     }
-}
+};

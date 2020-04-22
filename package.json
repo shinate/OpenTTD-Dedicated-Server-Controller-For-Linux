@@ -1,10 +1,11 @@
 {
   "name": "openttd-dedicated-server-controller-for-linux",
   "version": "1.0.0",
-  "description": "```\r |- bin/\r     |- otds                控制脚本",
+  "description": "Openttd dedicated server controller",
   "main": "src/otds.js",
   "scripts": {
-    "web": "webpack"
+    "web": "webpack",
+    "save": "git add . && git commit -m 'save'"
   },
   "repository": {
     "type": "git",

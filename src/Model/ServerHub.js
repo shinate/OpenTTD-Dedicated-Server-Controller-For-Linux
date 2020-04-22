@@ -45,8 +45,8 @@ class ServerHub {
         return _SERVERS[name];
     }
 
-    start(name = null) {
-        this.get(name).start();
+    start(name = null, save = null) {
+        this.get(name).start(save);
     }
 
     async stop(name = null) {

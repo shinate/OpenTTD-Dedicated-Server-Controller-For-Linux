@@ -22,7 +22,9 @@ export default class Servers {
 
     start(request) {
         let name = request.params.name;
-        ServerHub.start(name);
+        delete request.params.name;
+        let save = request.params.file;
+        ServerHub.start(name, save ? request.params : null);
         let ret = {};
         ret[name] = pick(ServerHub.get(name), [ 'stats', 'process' ]);
         return ret;
