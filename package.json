@@ -5,7 +5,8 @@
   "main": "src/otds.js",
   "scripts": {
     "web": "webpack",
-    "save": "git add . && git commit -m 'save'"
+    "save": "git add . && git commit -m 'save'",
+    "eslint": "eslint ./src --ext .js"
   },
   "repository": {
     "type": "git",
